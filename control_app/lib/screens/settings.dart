@@ -52,6 +52,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  TextEditingController startCont;
+  TextEditingController endCont;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -93,11 +101,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             if (formGlobalKey.currentState.validate()) {
                               formGlobalKey.currentState.save();
                               value.start = startVal.toInt();
-                              value.end = startVal.toInt();
-                              print(value.start);
+                              value.end = endVal.toInt();
 
                               _sendMessage(
-                                  startVal.toString(), value.connection);
+                                  '4' + startVal.toString(), value.connection);
+                              _sendMessage(
+                                  '5' + endVal.toString(), value.connection);
                               setState(() {
                                 edit = false;
                               });
@@ -116,78 +125,84 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              validator: startValidator,
-              onSaved: (String val) {
-                startVal = int.parse(val);
-              },
-              onChanged: (String val) {
-                startVal = int.parse(val);
-              },
-              enabled: edit,
-              style:
-                  TextStyle(color: Colors.black, decorationColor: Colors.white),
-              decoration: InputDecoration(
-                labelStyle: TextStyle(
-                    color: Colors.blue[900], decorationColor: Colors.white),
-                hintStyle: TextStyle(
-                    color: Colors.blue[900], decorationColor: Colors.white),
-                labelText: 'Start C°',
-                hintText: 'Start C°',
-                prefixIcon:
-                    Icon(Icons.arrow_forward_rounded, color: Colors.blue[900]),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey[900], width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                ),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
+          Consumer<Myprovider>(
+            builder: (context, value, child) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                validator: startValidator,
+                onSaved: (String val) {
+                  startVal = int.parse(val);
+                },
+                onChanged: (String val) {
+                  startVal = int.parse(val);
+                },
+                enabled: edit,
+                initialValue: value.start.toString(),
+                style: TextStyle(
+                    color: Colors.black, decorationColor: Colors.white),
+                decoration: InputDecoration(
+                  labelStyle: TextStyle(
+                      color: Colors.blue[900], decorationColor: Colors.white),
+                  hintStyle: TextStyle(
+                      color: Colors.blue[900], decorationColor: Colors.white),
+                  labelText: 'Start C°',
+                  hintText: 'Start C°',
+                  prefixIcon: Icon(Icons.arrow_forward_rounded,
+                      color: Colors.blue[900]),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey[900], width: 1.0),
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                  ),
                 ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              validator: endValidator,
-              onSaved: (String val) {
-                endVal = int.parse(val);
-              },
-              onChanged: (String val) {
-                endVal = int.parse(val);
-              },
-              enabled: edit,
-              style:
-                  TextStyle(color: Colors.black, decorationColor: Colors.white),
-              decoration: InputDecoration(
-                labelStyle: TextStyle(
-                    color: Colors.blue[900], decorationColor: Colors.white),
-                hintStyle: TextStyle(
-                    color: Colors.blue[900], decorationColor: Colors.white),
-                labelText: 'End C°',
-                hintText: 'End C°',
-                prefixIcon:
-                    Icon(Icons.arrow_back_rounded, color: Colors.blue[900]),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey[900], width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                ),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
+          Consumer<Myprovider>(
+            builder: (context, value, child) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                validator: endValidator,
+                onSaved: (String val) {
+                  endVal = int.parse(val);
+                },
+                onChanged: (String val) {
+                  endVal = int.parse(val);
+                },
+                enabled: edit,
+                initialValue: value.end.toString(),
+                style: TextStyle(
+                    color: Colors.black, decorationColor: Colors.white),
+                decoration: InputDecoration(
+                  labelStyle: TextStyle(
+                      color: Colors.blue[900], decorationColor: Colors.white),
+                  hintStyle: TextStyle(
+                      color: Colors.blue[900], decorationColor: Colors.white),
+                  labelText: 'End C°',
+                  hintText: 'End C°',
+                  prefixIcon:
+                      Icon(Icons.arrow_back_rounded, color: Colors.blue[900]),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey[900], width: 1.0),
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                  ),
                 ),
               ),
             ),

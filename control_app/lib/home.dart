@@ -192,17 +192,17 @@ class _HomeState extends State<Home> {
   int endVal;
   final formGlobalKey = GlobalKey<FormState>();
 
-  // void _sendMessage(String text) async {
-  //   text = text.trim();
-  //   if (text.length > 0) {
-  //     try {
-  //       connection.output.add(utf8.encode(text + "\r\n"));
-  //       await connection.output.allSent;
-  //     } catch (e) {
-  //       setState(() {});
-  //     }
-  //   }
-  // }
+  void _sendMessage(String text, connection) async {
+    text = text.trim();
+    if (text.length > 0) {
+      try {
+        connection.output.add(utf8.encode(text + "\r\n"));
+        await connection.output.allSent;
+      } catch (e) {
+        setState(() {});
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -299,6 +299,11 @@ class _HomeState extends State<Home> {
                   _selectedIndex = index;
                 });
                 myProv.connection = connection;
+                if (index == 0) {
+                  _sendMessage('200', connection);
+                } else if (index == 1) {
+                  _sendMessage('300', connection);
+                }
               },
             ),
           ),

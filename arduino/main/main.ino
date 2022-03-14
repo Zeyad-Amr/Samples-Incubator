@@ -1,11 +1,15 @@
 #include <math.h>
-#define fan_relayC 13  //Red
-#define se4war_relayH 7  //Green
+#define cooler 13  //Red
+#define heater 7  //Green
 const int thermistor_output = A1; //Green
+double temperature;
+double maxTemp; 
+double minTemp;      
+
 
 void setup() {
-  pinMode(fan_relayC, OUTPUT);
-  pinMode(se4war_relayH, OUTPUT);
+  pinMode(cooler, OUTPUT);
+  pinMode(heater, OUTPUT);
   Serial.begin(9600);  /* Define baud rate for serial communication */
 }
 
@@ -13,42 +17,58 @@ void loop() {
 
   //sending temp
   String x=",";
-  double y=22.3;
-  String z= x+ ""+String(y);
+   temperature = getTemp();
+  String z= x+ ""+String(temperature);
   Serial.print(z);
 delay(1000);
 
 //reciving from app
 if (Serial.available() > 0) {
- String yy=String(Serial.parseInt(),DEC);
- if(yy=="10"){
-  digitalWrite(fan_relayC,HIGH); 
-    digitalWrite(se4war_relayH,HIGH);
- }else{
-  digitalWrite(fan_relayC,LOW); 
-    digitalWrite(se4war_relayH,LOW);
+ String messeage=String(Serial.parseInt(),DEC);
+
+  if(messeage=="200"){ // automatic
+    if(temperature>maxTemp){
+    //Open cooler relay 
+    digitalWrite(cooler,HIGH); 
+    digitalWrite(heater,LOW);
+    }else if (temperature<minTemp){
+    //Open the  heater relay
+    digitalWrite(heater,HIGH); 
+    digitalWrite(cooler,LOW);
+    }else if (temperature>minTemp && temperature<maxTemp){
+    //Close the heater and the fan relays
+    digitalWrite(heater,LOW); 
+    digitalWrite(cooler,LOW);
+    }
+  } else if(messeage=="300"){// manual
+    digitalWrite(cooler,LOW); 
+    digitalWrite(heater,LOW);
+  }else if(messeage=="301"){// cooler on
+    digitalWrite(cooler,HIGH); 
+    digitalWrite(heater,LOW);
+  }else if(messeage=="302"){// heater on
+    digitalWrite(cooler,LOW); 
+    digitalWrite(heater,HIGH);
+  }else if(messeage=="303"){// cooler & heater on
+    digitalWrite(cooler,HIGH); 
+    digitalWrite(heater,HIGH);
+  }
+  
+  if(messeage[0]=='4'){// start
+    String m=String(messeage[1])+String(messeage[2]);
+    minTemp=m.toDouble();
+  }
+  
+  if(messeage[0]=='5'){// end
+   String m=String(messeage[1])+String(messeage[2]);
+   maxTemp=m.toDouble();
+  }
+  
+ delay(1000);
  }
- delay(1000);}
-//  float temperature= getTemp();
-//  float maxTemp =35;  //serial.read();
-//  float minTemp =30;      //serial.read();
-//  
-//  if(temperature>maxTemp){
-//    //Open fan relay 
-//    digitalWrite(fan_relayC,HIGH); 
-//    digitalWrite(se4war_relayH,LOW);
-//    }   
-//  if (temperature<minTemp){
-//    //Open the se4war heater relay
-//    digitalWrite(se4war_relayH,HIGH); 
-//    digitalWrite(fan_relayC,LOW);}
-//    
-//  if (temperature>minTemp && temperature<maxTemp){
-//    //Close the se4war and the fan relays
-//    digitalWrite(se4war_relayH,LOW); 
-//    digitalWrite(fan_relayC,LOW);}
-//       
 }
+
+
 
 double getTemp(){
   int thermistor_adc_val;
@@ -73,3 +93,5 @@ double getTemp(){
   return temperature;
  
   }
+  
+  
