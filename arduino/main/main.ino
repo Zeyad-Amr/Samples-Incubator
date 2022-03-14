@@ -10,9 +10,25 @@ void setup() {
 }
 
 void loop() {
-  Serial.print(",22.1");
 
- delay(1000);
+  //sending temp
+  String x=",";
+  double y=22.3;
+  String z= x+ ""+String(y);
+  Serial.print(z);
+delay(1000);
+
+//reciving from app
+if (Serial.available() > 0) {
+ String yy=String(Serial.parseInt(),DEC);
+ if(yy=="10"){
+  digitalWrite(fan_relayC,HIGH); 
+    digitalWrite(se4war_relayH,HIGH);
+ }else{
+  digitalWrite(fan_relayC,LOW); 
+    digitalWrite(se4war_relayH,LOW);
+ }
+ delay(1000);}
 //  float temperature= getTemp();
 //  float maxTemp =35;  //serial.read();
 //  float minTemp =30;      //serial.read();

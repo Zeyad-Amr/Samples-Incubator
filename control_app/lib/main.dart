@@ -1,7 +1,9 @@
+import 'package:control_app/provider/provider.dart';
 import 'package:control_app/screens/bluetooth_status.dart';
 import 'package:control_app/screens/connection_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:provider/provider.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 
 void main() {
@@ -13,40 +15,51 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Sample Incubator',
-      theme: ThemeData(
-        primaryColor: Colors.grey[900],
-      ),
-      home: Scaffold(
-        body: Stack(
-          alignment: Alignment.center,
-          children: [
-            SplashScreenView(
-              navigateRoute: Services(),
-              duration: 4000,
-              imageSize: 250,
-              imageSrc: "assets/logo.png",
-              text: 'Sample Incubator',
-              textType: TextType.TyperAnimatedText,
-              textStyle: TextStyle(
-                fontSize: 30.0,
-              ),
-              backgroundColor: Colors.white,
+    return ChangeNotifierProvider<Myprovider>(
+      create: (context) => Myprovider(),
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Sample Incubator',
+          theme: ThemeData(
+            primaryColor: Colors.grey[900],
+          ),
+          home: SplashScreen()),
+    );
+  }
+}
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          SplashScreenView(
+            navigateRoute: Services(),
+            duration: 4000,
+            imageSize: 250,
+            imageSrc: "assets/logo.png",
+            text: 'Sample Incubator',
+            textType: TextType.TyperAnimatedText,
+            textStyle: TextStyle(
+              fontSize: 30.0,
             ),
-            Positioned(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('Powered by Akwa Mix'),
-                  Text('Team 16'),
-                ],
-              ),
-              bottom: 50,
-            )
-          ],
-        ),
+            backgroundColor: Colors.white,
+          ),
+          Positioned(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Powered by Akwa Mix'),
+                Text('Team 16'),
+              ],
+            ),
+            bottom: 50,
+          )
+        ],
       ),
     );
   }

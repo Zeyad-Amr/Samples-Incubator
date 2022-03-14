@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:control_app/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -7,6 +9,7 @@ import 'package:control_app/Screens/automatic.dart';
 import 'package:control_app/Screens/developers.dart';
 import 'package:control_app/Screens/manual.dart';
 import 'package:control_app/Screens/settings.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   final BluetoothDevice server;
@@ -19,24 +22,22 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
-
-  static const List<Widget> _widgetOptions = <Widget>[
-    SettingsScreen(),
+  BluetoothConnection connection;
+  static List<Widget> _widgetOptions = <Widget>[
     AutomaticScreen(),
     ManualScreen(),
+    SettingsScreen(),
     DevelopersScreen(),
   ];
 
   /// Start Bluetooth Connection implementation
 
-  BluetoothConnection connection;
   String prevString = '';
 
   String _messageBuffer = '';
 
   final TextEditingController textEditingController =
       new TextEditingController();
-  final ScrollController listScrollController = new ScrollController();
 
   bool isConnecting = true;
   bool get isConnected => connection != null && connection.isConnected;
@@ -56,11 +57,8 @@ class _HomeState extends State<Home> {
         isConnecting = false;
         isDisconnecting = false;
       });
-      textEditingController.addListener(() {
-        setState(() {});
-      });
+
       connection.input.listen(_onDataReceived).onData((data) {
-        print('xxxx');
         // Allocate buffer for parsed data
         int backspacesCounter = 0;
         data.forEach((byte) {
@@ -167,28 +165,82 @@ class _HomeState extends State<Home> {
     setState(() {});
   }
 
+  //////////////////////////////////
+
+  String startValidator(String val) {
+    return int.tryParse(val) != null
+        ? int.tryParse(val) > 0
+            ? endVal.toInt() < startVal.toInt()
+                ? 'Minimun temperature should be less Maximum'
+                : null
+            : 'Minimun temperature should be more than 0 C°'
+        : 'Minimun temperature should be more than 0 C°';
+  }
+
+  String endValidator(String val) {
+    return int.tryParse(val) != null
+        ? int.tryParse(val) < 75
+            ? endVal.toInt() < startVal.toInt()
+                ? 'Minimun temperature should be less Maximum'
+                : null
+            : 'Minimun temperature should be less than 75 C°'
+        : 'Minimun temperature should be less than 75 C°';
+  }
+
+  bool edit = false;
+  int startVal;
+  int endVal;
+  final formGlobalKey = GlobalKey<FormState>();
+
+  // void _sendMessage(String text) async {
+  //   text = text.trim();
+  //   if (text.length > 0) {
+  //     try {
+  //       connection.output.add(utf8.encode(text + "\r\n"));
+  //       await connection.output.allSent;
+  //     } catch (e) {
+  //       setState(() {});
+  //     }
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
+    var myProv = Provider.of<Myprovider>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 20,
         title: const Text('Sample Incubator'),
+        leading: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+          child: Image.asset(
+            'assets/logo.png',
+          ),
+        ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Center(
-                child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.thermostat, color: Colors.blue),
-                Text(
-                  level.trim() + ' C°',
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.035),
-                ),
-              ],
-            )),
+          Consumer<Myprovider>(
+            builder: (context, value, child) => Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Center(
+                  child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.thermostat,
+                      color: double.parse(level.trim()) < value.start
+                          ? Colors.blueAccent
+                          : double.parse(level.trim()) > value.end
+                              ? Colors.red
+                              : Colors.green),
+                  Text(
+                    level.trim() + ' C°',
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.035),
+                  ),
+                ],
+              )),
+            ),
           )
         ],
       ),
@@ -225,16 +277,16 @@ class _HomeState extends State<Home> {
               color: Colors.white,
               tabs: [
                 GButton(
-                  icon: Icons.settings,
-                  text: 'Settings',
-                ),
-                GButton(
                   icon: Icons.thermostat_auto_rounded,
                   text: 'Automatic',
                 ),
                 GButton(
                   icon: Icons.thermostat,
                   text: 'Manual',
+                ),
+                GButton(
+                  icon: Icons.settings,
+                  text: 'Settings',
                 ),
                 GButton(
                   icon: Icons.developer_mode_rounded,
@@ -246,6 +298,7 @@ class _HomeState extends State<Home> {
                 setState(() {
                   _selectedIndex = index;
                 });
+                myProv.connection = connection;
               },
             ),
           ),
