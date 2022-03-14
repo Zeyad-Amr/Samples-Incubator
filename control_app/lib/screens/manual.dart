@@ -13,6 +13,13 @@ class ManualScreen extends StatefulWidget {
 }
 
 class _ManualScreenState extends State<ManualScreen> {
+  List<Color> colors = [
+    Colors.red,
+    Colors.orange,
+    Colors.blue,
+    Colors.grey[900]
+  ];
+  int isPressed = 0;
   void _sendMessage(String text, connection) async {
     text = text.trim();
     if (text.length > 0) {
@@ -31,34 +38,61 @@ class _ManualScreenState extends State<ManualScreen> {
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Consumer<Myprovider>(
             builder: (context, value, child) => ElevatedButton(
               onPressed: () {
                 _sendMessage('301', value.connection);
+                setState(() {
+                  isPressed = 3;
+                });
               },
-              child: Text('COOLER ON'),
+              child: Text('COOLING'),
               style: ElevatedButton.styleFrom(
-                primary: Colors.grey[900],
-              ),
+                  primary: isPressed == 3 ? Colors.blueAccent[700] : colors[3],
+                  shape: CircleBorder(),
+                  fixedSize: Size(MediaQuery.of(context).size.width * 0.3,
+                      MediaQuery.of(context).size.width * 0.3)),
             ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.width * 0.1,
           ),
           Consumer<Myprovider>(
             builder: (context, value, child) => ElevatedButton(
               onPressed: () {
                 _sendMessage('302', value.connection);
+                setState(() {
+                  isPressed = 1;
+                });
               },
-              child: Text('HEATER ON'),
-              style: ElevatedButton.styleFrom(primary: Colors.grey[900]),
+              child: Text('HEATING'),
+              style: ElevatedButton.styleFrom(
+                  primary: isPressed == 1 ? Colors.red : colors[3],
+                  shape: CircleBorder(),
+                  fixedSize: Size(MediaQuery.of(context).size.width * 0.3,
+                      MediaQuery.of(context).size.width * 0.3)),
             ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.width * 0.1,
           ),
           Consumer<Myprovider>(
             builder: (context, value, child) => ElevatedButton(
               onPressed: () {
                 _sendMessage('303', value.connection);
+                setState(() {
+                  isPressed = 2;
+                });
               },
-              child: Text('COOLER & COOLER ON'),
-              style: ElevatedButton.styleFrom(primary: Colors.grey[900]),
+              child: Text('COOLING &\n HEATING'),
+              style: ElevatedButton.styleFrom(
+                primary: isPressed == 2 ? Colors.orange : colors[3],
+                shape: CircleBorder(),
+                fixedSize: Size(MediaQuery.of(context).size.width * 0.3,
+                    MediaQuery.of(context).size.width * 0.3),
+              ),
             ),
           )
         ],

@@ -7,9 +7,13 @@ double maxTemp;
 double minTemp;      
 
 
+//Notes: Heater relay is reversed
+
 void setup() {
   pinMode(cooler, OUTPUT);
   pinMode(heater, OUTPUT);
+  digitalWrite(cooler,LOW); 
+    digitalWrite(heater,HIGH);
   Serial.begin(9600);  /* Define baud rate for serial communication */
 }
 
@@ -30,28 +34,28 @@ if (Serial.available() > 0) {
     if(temperature>maxTemp){
     //Open cooler relay 
     digitalWrite(cooler,HIGH); 
-    digitalWrite(heater,LOW);
+    digitalWrite(heater,HIGH);
     }else if (temperature<minTemp){
     //Open the  heater relay
-    digitalWrite(heater,HIGH); 
+    digitalWrite(heater,LOW); 
     digitalWrite(cooler,LOW);
     }else if (temperature>minTemp && temperature<maxTemp){
     //Close the heater and the fan relays
-    digitalWrite(heater,LOW); 
+    digitalWrite(heater,HIGH); 
     digitalWrite(cooler,LOW);
     }
   } else if(messeage=="300"){// manual
     digitalWrite(cooler,LOW); 
-    digitalWrite(heater,LOW);
+    digitalWrite(heater,HIGH);
   }else if(messeage=="301"){// cooler on
     digitalWrite(cooler,HIGH); 
-    digitalWrite(heater,LOW);
+    digitalWrite(heater,HIGH);
   }else if(messeage=="302"){// heater on
     digitalWrite(cooler,LOW); 
-    digitalWrite(heater,HIGH);
+    digitalWrite(heater,LOW);
   }else if(messeage=="303"){// cooler & heater on
     digitalWrite(cooler,HIGH); 
-    digitalWrite(heater,HIGH);
+    digitalWrite(heater,LOW);
   }
   
   if(messeage[0]=='4'){// start

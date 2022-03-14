@@ -136,7 +136,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
                 onChanged: (String val) {
                   startVal = int.parse(val);
+                  startCont.text = value.start.toString();
                 },
+                controller: startCont,
                 enabled: edit,
                 initialValue: value.start.toString(),
                 style: TextStyle(
@@ -175,6 +177,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onSaved: (String val) {
                   endVal = int.parse(val);
                 },
+                controller: endCont,
                 onChanged: (String val) {
                   endVal = int.parse(val);
                 },

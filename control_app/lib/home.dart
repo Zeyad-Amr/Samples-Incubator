@@ -299,6 +299,11 @@ class _HomeState extends State<Home> {
                   _selectedIndex = index;
                 });
                 myProv.connection = connection;
+                myProv.status = double.parse(level.trim()) < myProv.start
+                    ? 1
+                    : double.parse(level.trim()) > myProv.end
+                        ? 3
+                        : 2;
                 if (index == 0) {
                   _sendMessage('200', connection);
                 } else if (index == 1) {
